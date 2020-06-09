@@ -13,7 +13,7 @@ type DoneFunc = <R>(arg?: R) => R;
 type Unsubscribe = () => void;
 type Subscriber<T> = (state: T) => void;
 
-interface Stated<T> {
+export interface Stateful<T> {
   getState(): T;
   setState(next: StateSetter<T>): void;
   batch<R>(fn: BatchFn<R>): R;
@@ -22,7 +22,7 @@ interface Stated<T> {
 
 type Checker = (a: any, b: any) => boolean;
 
-export function state<T>(state: T): Stated<T>;
+export function state<T>(state: T): Stateful<T>;
 
 type Selector<T, R> = (arg: T) => R;
 

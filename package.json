@@ -1,0 +1,47 @@
+{
+  "name": "@zuze/stateful",
+  "version": "1.0.0",
+  "description": "Ridiculously tiny state/selector package",
+  "main": "build/index.js",
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/zuze-lab/stateful/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zuze-lab/stateful"
+  },
+  "scripts": {
+    "prepublishOnly": "yarn test && && yarn test:typescript && yarn build",
+    "build": "rimraf build && babel index.js -d build",
+    "lint": "eslint index.js",
+    "test:ci": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test": "jest  --testPathPattern=./test/*",
+    "test:typescript": "jest --config ./typescript_test/jest.tsconfig.js --testPathPattern=./typescript_test/*"
+  },
+  "author": "Adam Jenkins",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@types/jest": "^25.2.1",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.1.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.4.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-import": "^2.21.1",
+    "eslint-plugin-jest": "^22.17.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^25.1.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.6.4"
+  }
+}

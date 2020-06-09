@@ -1,4 +1,4 @@
-# @zuze/state
+# @zuze/stateful
 
 [![npm version](https://img.shields.io/npm/v/@zuze/stateful.svg)](https://npmjs.org/package/@zuze/stateful)
 [![Coverage Status](https://coveralls.io/repos/github/zuze-lab/stateful/badge.svg)](https://coveralls.io/github/zuze-lab/stateful)
@@ -23,7 +23,7 @@ yarn install @zuze/stateful
 2. Use it!
 
 ```js
-import { state, createSelector } from '@zuze/state';
+import { state, createSelector } from '@zuze/stateful';
 
 const initialState = {
     touched: {}

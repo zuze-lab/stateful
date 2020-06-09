@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "types": "index.d.ts",
   "files": [
-    "dist",
+    "build",
     "index.d.ts"
   ],
   "keywords": [],
@@ -17,7 +17,7 @@
     "url": "https://github.com/zuze-lab/stateful"
   },
   "scripts": {
-    "prepublishOnly": "yarn test && && yarn test:typescript && yarn build",
+    "prepublishOnly": "yarn test && yarn test:typescript && yarn build",
     "build": "rimraf build && babel index.js -d build",
     "lint": "eslint index.js",
     "test:ci": "yarn test:typescript && jest --coverage --coverageReporters=text-lcov | coveralls",

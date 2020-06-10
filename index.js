@@ -8,20 +8,16 @@ const asyncTick = (fn, done) => {
   return next && next.then ? next.then(done) : (done(), next);
 };
 
-export const checkArr = (a, b, checker = defCheck) =>
-  a.length === b.length && a.every((a, i) => checker(a, b[i]));
-
 const defCheck = (a, b) => a === b;
 
-const memo = (fn, check) => {
+const memo = (fn, check = defCheck) => {
   let args, last;
-  return (...inner) => {
-    if (!args || !checkArr(inner, args, check)) {
-      args = inner;
-      last = fn(...inner);
-    }
-    return last;
-  };
+  return (...inner) =>
+    !args ||
+    inner.length !== args.length ||
+    !inner.every((a, i) => check(a, args[i]))
+      ? ((args = inner), (last = fn(...inner)))
+      : last;
 };
 
 export const createSelectorFactory = check => (...fns) => {

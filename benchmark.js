@@ -28,7 +28,6 @@ const results = [];
 const onCycle = event => results.push(event);
 
 const onComplete = ({ currentTarget }) => {
-  //   console.log(currentTarget);
   Array(currentTarget.length)
     .fill(0)
     .map((o, idx) => {

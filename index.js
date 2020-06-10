@@ -1,12 +1,4 @@
-const callOnce = fn => {
-  let i = 0;
-  return () => i++ || fn();
-};
-
-const asyncTick = (fn, done) => {
-  const next = fn.length ? { then: fn } : fn();
-  return next && next.then ? next.then(done) : (done(), next);
-};
+const callOnce = (fn, i = 0) => () => i++ || fn();
 
 const defCheck = (a, b) => a === b;
 
@@ -41,13 +33,14 @@ export const state = state => {
 
   const getState = () => state;
   const setState = next => {
-    (state =
-      typeof next === 'function'
-        ? next(state)
-        : Object.assign({}, state, next)),
-      notify();
+    state = typeof next === 'function' ? next(state) : { ...state, ...next };
+    notify();
   };
-  const batch = fn => ++batchDepth && asyncTick(fn, callOnce(done));
+  const batch = then => {
+    ++batchDepth;
+    const next = then.length ? { then } : then();
+    return next && next.then ? next.then(callOnce(done)) : (done(), next);
+  };
   const subscribe = subscriber => {
     subscriber(state);
     const idx = subscribers.push(subscriber);

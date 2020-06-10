@@ -8,37 +8,30 @@ const asyncTick = (fn, done) => {
   return next && next.then ? next.then(done) : (done(), next);
 };
 
-const fromArgs = a => Array.prototype.slice.call(a);
+export const checkArr = (a, b, checker = defCheck) =>
+  a.length === b.length && a.every((a, i) => checker(a, b[i]));
+
+const defCheck = (a, b) => a === b;
 
 const memo = (fn, check) => {
-  // default arg check is equality
-  check = check || ((a, b) => a === b);
-  let args = [],
-    last,
-    calls = 0;
-  return function() {
-    const inner = fromArgs(arguments);
-    return calls++ === 0 ||
-      inner.length !== args.length ||
-      inner.some((a, idx) => !check(a, args[idx]))
-      ? ((args = inner), (last = fn.apply(null, inner)))
-      : last;
+  let args, last;
+  return (...inner) => {
+    if (!args || !checkArr(inner, args, check)) {
+      args = inner;
+      last = fn(...inner);
+    }
+    return last;
   };
 };
 
-const createSelectorFactory = check => {
-  const m = fn => memo(fn, check);
-
-  return function() {
-    const fns = fromArgs(arguments);
-    const memoed = m(fns.pop());
-    // this line allows us to act like reselect where the first argument can be an array of dependencies
-    const deps = (Array.isArray(fns[0]) ? fns[0] : fns).map(m);
-    return m(function() {
-      const a = f => f.apply(null, arguments);
-      return memoed.apply(null, (deps.length ? deps : [i => i]).map(a));
-    });
-  };
+export const createSelectorFactory = check => (...fns) => {
+  const memoed = memo(fns.pop(), check);
+  // this line allows us to act like reselect where the first argument can be an array of dependencies
+  const deps = !fns[0] || fns[0].constructor !== Array ? fns : fns[0];
+  return memo(
+    (...args) => memoed(...(deps.length ? deps.map(a => a(...args)) : args)),
+    check
+  );
 };
 
 export const createSelector = createSelectorFactory();

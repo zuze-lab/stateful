@@ -1,6 +1,6 @@
 {
   "name": "@zuze/stateful",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "types": "index.d.ts",
@@ -19,6 +19,7 @@
   "scripts": {
     "prepublishOnly": "yarn test && yarn test:typescript && yarn build",
     "build": "rimraf build && babel index.js -d build",
+    "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
     "test:ci": "yarn test:typescript && jest --coverage --coverageReporters=text-lcov | coveralls",
     "test": "jest  --testPathPattern=./test/*",

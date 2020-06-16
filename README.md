@@ -95,7 +95,7 @@ Create a stateful instance with an initial state. Returns the stateful interface
 
   ```
 <a name="selector"></a>
-**`createSelector(...selectors | selectors[], combiner)`**
+**`createSelector(...selectors, combiner)`**
 
 The purpose of a selector (popularized in [reselect](https://github.com/reduxjs/reselect)) is to minimize expensive computations through memoization. 
 

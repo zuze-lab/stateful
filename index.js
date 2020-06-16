@@ -14,10 +14,8 @@ const memo = (fn, check = defCheck) => {
 
 export const createSelectorFactory = check => (...fns) => {
   const memoed = memo(fns.pop(), check);
-  // this line allows us to act like reselect where the first argument can be an array of dependencies
-  const deps = !fns[0] || fns[0].constructor !== Array ? fns : fns[0];
   return memo(
-    (...args) => memoed(...(deps.length ? deps.map(a => a(...args)) : args)),
+    (...args) => memoed(...(!fns.length ? args : fns.map(a => a(...args)))),
     check
   );
 };

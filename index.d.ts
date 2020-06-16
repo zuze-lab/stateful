@@ -55,27 +55,3 @@ export function createSelector<T, R1, R2, R3, R4, S>(
   selectorD: Selector<T, R4>,
   combiner: (arg1: R1, arg2: R2, arg3: R3, arg4: R4) => S
 ): (arg: T) => S;
-
-
-export function createSelector<T, R1, S>(
-  selectors: [Selector<T, R1>],
-  combiner: (arg: R1) => S
-): (arg: T) => S;
-
-export function createSelector<T, R1, R2, S>(
-  selectors: [Selector<T, R1>, Selector<T, R2>],
-  combiner: (arg1: R1, arg2: R2) => S
-): (arg: T) => S;
-
-export function createSelector<T, R1, R2, R3, S>(
-  selectors: [Selector<T, R1>, Selector<T, R2>, Selector<T, R3>],
-  combiner: (arg1: R1, arg2: R2, arg3: R3) => S
-): (arg: T) => S;
-
-export function createSelector<T, R1, R2, R3, R4, S>(
-  selectors: [Selector<T, R1>, Selector<T, R2>, Selector<T, R3>, Selector<T, R4>],
-  combiner: (arg1: R1, arg2: R2, arg3: R3, arg4: R4) => S
-): (arg: T) => S;
-
-
-// export function createSelectorFactory(check?: Checker): typeof createSelector

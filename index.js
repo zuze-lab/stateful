@@ -1,5 +1,3 @@
-const callOnce = (fn, i = 0) => () => i++ || fn();
-
 const defCheck = (a, b) => a === b;
 
 const memo = (fn, check = defCheck) => {
@@ -24,8 +22,7 @@ export const createSelectorFactory = check => (...fns) => {
 
 export const createSelector = createSelectorFactory();
 
-export const state = state => {
-  const subscribers = [];
+export const state = (state, subscribers = []) => {
   let batchDepth = 0;
 
   const notify = () => batchDepth || subscribers.forEach(s => s(state));
@@ -39,12 +36,14 @@ export const state = state => {
   const batch = then => {
     ++batchDepth;
     const next = then.length ? { then } : then();
-    return next && next.then ? next.then(callOnce(done)) : (done(), next);
+    return next && next.then ? next.then(done) : (done(), next);
   };
   const subscribe = subscriber => {
     subscriber(state);
-    const idx = subscribers.push(subscriber);
-    return callOnce(() => subscribers.splice(idx - 1, 1));
+    subscribers.push(subscriber);
+    return () => {
+      subscribers = subscribers.filter(s => s !== subscriber);
+    };
   };
 
   return { setState, getState, batch, subscribe };

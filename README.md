@@ -33,7 +33,7 @@ Or just pull it in from the browser:
 
 ### API
 
-**`state<T>(initialState: T)`: Stateful<T>**
+**`state(initialState: T): Stateful<T>`**
 
 Create a stateful instance with an initial state. Returns the stateful interface:
 
@@ -139,7 +139,7 @@ The default memoizer is a simple equality check `(a,b) => a === b`. If this leve
 
 ```js
 import { isEqual } from 'lodash';
-import { createSelectorFactory } from '@zuze/schema';
+import { createSelectorFactory } from '@zuze/stateful';
 
 const createDeepEqualSelector = createSelectorFactory(isEqual);
 

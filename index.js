@@ -1,4 +1,6 @@
-const memo = (fn, check = (a, b) => a === b) => {
+const defCheck = (a, b) => a === b;
+
+const memo = (fn, check = defCheck) => {
   let args, last;
   return (...inner) =>
     !args ||
@@ -8,7 +10,7 @@ const memo = (fn, check = (a, b) => a === b) => {
       : last;
 };
 
-const createSelectorFactory = check => (...fns) => {
+export const createSelectorFactory = check => (...fns) => {
   const memoed = memo(fns.pop(), check);
   // this line allows us to act like reselect where the first argument can be an array of dependencies
   const deps = !fns[0] || fns[0].constructor !== Array ? fns : fns[0];
@@ -18,9 +20,9 @@ const createSelectorFactory = check => (...fns) => {
   );
 };
 
-const createSelector = createSelectorFactory();
+export const createSelector = createSelectorFactory();
 
-const state = (state, subscribers = []) => {
+export const state = (state, subscribers = []) => {
   let batchDepth = 0;
 
   const notify = () => batchDepth || subscribers.forEach(s => s(state));
@@ -46,5 +48,3 @@ const state = (state, subscribers = []) => {
 
   return { setState, getState, batch, subscribe };
 };
-
-export { state, createSelector, createSelectorFactory };

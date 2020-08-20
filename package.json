@@ -4,9 +4,12 @@
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "browser": "build/bundle.min.js",
+  "module": "index.js",
   "types": "index.d.ts",
+  "sideEffects": false,
   "files": [
     "build",
+    "index.js",
     "index.d.ts"
   ],
   "keywords": [],

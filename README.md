@@ -17,7 +17,7 @@ Install it as a dependency in your JavaScript/Typescript project
 ```bash
 npm install @zuze/stateful
 # or
-yarn install @zuze/stateful
+yarn add @zuze/stateful
 ```
 
 Or just pull it in from the browser:

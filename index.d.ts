@@ -26,6 +26,8 @@ export function state<T>(state: T): Stateful<T>;
 
 type Selector<T, R> = (arg: T) => R;
 
+//export function memo<R extends Function>(func: R, checker?: Checker): R
+
 export function createSelector<T, S>(
   combiner: Selector<T, S>,
 ): (arg: T) => S;

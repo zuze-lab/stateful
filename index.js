@@ -28,23 +28,24 @@ export const state = (state, subscribers = []) => {
   const notify = () => batchDepth || subscribers.forEach(s => s(state));
   const done = () => --batchDepth || notify();
 
-  const getState = () => state;
-  const setState = next => {
-    state = typeof next === 'function' ? next(state) : { ...state, ...next };
-    notify();
+  return {
+    getState: () => state,
+    setState: next =>
+      notify(
+        (state =
+          typeof next === 'function' ? next(state) : { ...state, ...next })
+      ),
+    batch: then => {
+      ++batchDepth;
+      const next = then.length ? { then } : then();
+      return (next || {}).then
+        ? next.then(memo(done, () => true))
+        : (done(), next);
+    },
+    subscribe: s => {
+      s(state);
+      subscribers.push(s);
+      return () => (subscribers = subscribers.filter(f => f !== s));
+    },
   };
-  const batch = then => {
-    ++batchDepth;
-    const next = then.length ? { then } : then();
-    return next && next.then ? next.then(done) : (done(), next);
-  };
-  const subscribe = subscriber => {
-    subscriber(state);
-    subscribers.push(subscriber);
-    return () => {
-      subscribers = subscribers.filter(s => s !== subscriber);
-    };
-  };
-
-  return { setState, getState, batch, subscribe };
 };

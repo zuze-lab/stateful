@@ -126,4 +126,22 @@ describe('state', () => {
     d();
     expect(spy).toHaveBeenCalled();
   });
+
+  it('should not allow done to be called more than once', () => {
+    const myState = { fetching: false, error: true };
+    const s = state(myState);
+    const spy = jest.fn();
+    s.subscribe(spy);
+    spy.mockClear();
+
+    const d = s.batch(done => done);
+    s.setState({ fetching: true });
+    expect(spy).not.toHaveBeenCalled();
+    d();
+    expect(spy).toHaveBeenCalled();
+    spy.mockReset();
+    d(); // call done again - should not change batchDepth
+    s.setState('joe');
+    expect(spy).toHaveBeenCalled();
+  });
 });

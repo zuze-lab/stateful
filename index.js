@@ -38,7 +38,7 @@ export const state = (state, subscribers = []) => {
     batch: then => {
       ++batchDepth;
       const next = then.length ? { then } : then();
-      return (next || {}).then
+      return next && next.then
         ? next.then(memo(done, () => true))
         : (done(), next);
     },

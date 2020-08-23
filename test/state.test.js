@@ -1,4 +1,4 @@
-import { state, createSelector } from '../index';
+import { state, createSelector, batchable } from '../index';
 
 describe('state', () => {
   it('should create', () => {
@@ -89,7 +89,7 @@ describe('state', () => {
 
   it('should batch (async)', async () => {
     const myState = { fetching: false, error: true };
-    const s = state(myState);
+    const s = batchable(state(myState));
     const spy = jest.fn();
     s.subscribe(spy);
     spy.mockClear();
@@ -103,7 +103,7 @@ describe('state', () => {
 
   it('should batch (no async, no done)', () => {
     const myState = { fetching: false, error: true };
-    const s = state(myState);
+    const s = batchable(state(myState));
     const spy = jest.fn();
     s.subscribe(spy);
     spy.mockClear();
@@ -115,7 +115,7 @@ describe('state', () => {
 
   it('should batch (done)', () => {
     const myState = { fetching: false, error: true };
-    const s = state(myState);
+    const s = batchable(state(myState));
     const spy = jest.fn();
     s.subscribe(spy);
     spy.mockClear();
@@ -129,7 +129,7 @@ describe('state', () => {
 
   it('should not allow done to be called more than once', () => {
     const myState = { fetching: false, error: true };
-    const s = state(myState);
+    const s = batchable(state(myState));
     const spy = jest.fn();
     s.subscribe(spy);
     spy.mockClear();

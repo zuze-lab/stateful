@@ -16,15 +16,20 @@ type Subscriber<T> = (state: T) => void;
 export interface Stateful<T> {
   getState(): T;
   setState(next: StateSetter<T>): void;
-  batch<R>(fn: BatchFn<R>): R;
+
   subscribe(subscriber: Subscriber<T>): Unsubscribe;
 }
 
 type Checker = (a: any, b: any) => boolean;
 
 export function state<T>(state: T): Stateful<T>;
+export function batchable<T>(state: Stateful<T>): BatchableStateful<T>;
 
 type Selector<T, R> = (arg: T) => R;
+
+export interface BatchableStateful<T> extends Stateful<T> {
+  batch<R>(fn: BatchFn<R>): R;
+}
 
 //export function memo<R extends Function>(func: R, checker?: Checker): R
 

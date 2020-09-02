@@ -1,4 +1,4 @@
-import { createSelector } from '../index';
+import { createSelector, createSelectorFactory, Checker } from '../index';
 
 describe('select', () => {
   it('should work (with a single func)', () => {
@@ -71,13 +71,11 @@ describe('select', () => {
   });
 
   it('should work with multiple funcs (array args)', () => {
-
     interface State {
       fetching: boolean;
       error?: boolean;
       name?: string;
     }
-
     const state = {
       fetching: true,
       error: false,
@@ -86,10 +84,7 @@ describe('select', () => {
     const spy = jest.fn((first: boolean, second: boolean) => [first, second]);
 
     const selector = createSelector(
-      [
-        (state: State) => state.fetching,
-        (state: State) => state.error
-      ],
+      [(state: State) => state.fetching, (state: State) => state.error],
       spy
     );
 
@@ -112,5 +107,35 @@ describe('select', () => {
 
     expect(selector({ fetching: false })).toStrictEqual([false, undefined]);
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should memoize an array result', () => {
+    interface State {
+      numbers: number[];
+    }
+    const n = (state: State) => state.numbers;
+    const n2 = (a: State['numbers']) => a.filter(a => !(a % 2));
+    const numbers = [1, 2, 3, 4];
+
+    const selector = createSelector(n, n2);
+
+    // not the same reference
+    expect(selector({ numbers: numbers.slice() })).not.toBe(
+      selector({ numbers: numbers.slice() })
+    );
+
+    const whichArray = (a: number[], b: number[], check: Checker) =>
+      a.length === b.length && a.every((a, i) => check(a, b[i])) ? a : b;
+
+    const createArraySelector = createSelectorFactory(
+      (a, b) => a === b,
+      whichArray
+    );
+
+    const arraySelector = createArraySelector(n, n2);
+
+    expect(arraySelector({ numbers: numbers.slice() })).toBe(
+      arraySelector({ numbers: numbers.slice().concat(5) })
+    );
   });
 });

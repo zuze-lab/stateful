@@ -31,7 +31,7 @@ describe('state', () => {
   });
 
   it('should subscribe', () => {
-    type StateType = boolean | { fetching: boolean, error: boolean }
+    type StateType = boolean | { fetching: boolean; error: boolean };
     const myState = { fetching: false, error: true };
     const s = state<StateType>(myState);
     const spy = jest.fn();
@@ -43,7 +43,7 @@ describe('state', () => {
   });
 
   it('should unsubscribe', () => {
-    type StateType = boolean | { fetching: boolean, error: boolean }
+    type StateType = boolean | { fetching: boolean; error: boolean };
     const myState = { fetching: false, error: true };
     const s = state<StateType>(myState);
     const spy = jest.fn();
@@ -70,13 +70,10 @@ describe('state', () => {
     const spy = jest.fn();
 
     const fetching = (state: typeof myState) => state.fetching;
-    const data = (state: typeof myState) => state.data.find(({ id }) => id === 2)?.a;
+    const data = (state: typeof myState) =>
+      state.data.find(({ id }) => id === 2)?.a;
 
-    const selector = createSelector(
-      fetching,
-      data,
-      spy
-    );
+    const selector = createSelector(fetching, data, spy);
 
     s.subscribe(selector);
     expect(spy).toHaveBeenCalledWith(false, 'b');
@@ -91,45 +88,5 @@ describe('state', () => {
     expect(spy).not.toHaveBeenCalled();
     s.setState({ fetching: true });
     expect(spy).toHaveBeenCalledWith(true, 'b');
-  });
-
-  it('should batch (async)', async () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    const promise = s.batch(() => Promise.resolve());
-    s.setState({ fetching: true });
-    expect(spy).not.toHaveBeenCalled();
-    await promise;
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should batch (no async, no done)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    s.batch(() => void 0);
-    s.setState({ fetching: true });
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should batch (done)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    const d = s.batch(done => done);
-    s.setState({ fetching: true });
-    expect(spy).not.toHaveBeenCalled();
-    d();
-    expect(spy).toHaveBeenCalled();
   });
 });

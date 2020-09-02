@@ -1,24 +1,31 @@
-const defCheck = (a, b) => a === b;
+export const defaultCheck = (a, b) => a === b;
 
-const memo = (fn, check = defCheck) => {
-  let args, last;
-  return (...inner) =>
-    !args ||
-    inner.length !== args.length ||
-    !inner.every((a, i) => check(a, args[i]))
-      ? ((args = inner), (last = fn(...inner)))
-      : last;
-};
+const which = (a, b, check) => (check(a, b) ? a : b);
 
-export const createSelectorFactory = check => (...fns) => {
-  const memoed = memo(fns.pop(), check);
-  // this line allows us to act like reselect where the first argument can be an array of dependencies
-  const deps = !fns[0] || fns[0].constructor !== Array ? fns : fns[0];
-  return memo(
-    (...args) => memoed(...(deps.length ? deps.map(a => a(...args)) : args)),
-    check
+export const memo = (
+  fn,
+  check = defaultCheck,
+  result = which,
+  args,
+  last,
+  i = 0
+) => (...inner) =>
+  !args ||
+  inner.length !== args.length ||
+  !inner.every((a, i) => check(a, args[i]))
+    ? ((args = inner),
+      (last = !i++ ? fn(...inner) : result(last, fn(...inner), check)))
+    : last;
+
+export const createSelectorFactory = (check, result) => (...fns) =>
+  ((memoed, deps) =>
+    memo(
+      (...args) => memoed(...(deps.length ? deps.map(a => a(...args)) : args)),
+      check
+    ))(
+    memo(fns.pop(), check, result),
+    !fns[0] || fns[0].constructor !== Array ? fns : fns[0]
   );
-};
 
 export const createSelector = createSelectorFactory();
 

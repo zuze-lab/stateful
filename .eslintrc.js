@@ -22,7 +22,7 @@ module.exports = {
         'plugin:import/errors',
         'plugin:import/warnings',
     ],
-    ignorePatterns: ['build/*'],
+    ignorePatterns: ['build/*','**/*.d.ts'],
     rules: {
         semi: ['error', 'always', { omitLastInOneLineBlock: true }],
         'no-unused-vars': 1,
@@ -44,7 +44,7 @@ module.exports = {
     },
     overrides: [
         {
-            files: ['**/test/**/*.js', '**/*.test.js'],
+            files: ['**/test/**/*.[t|j]s', '**/*.test.[t|j]s'],
             env: {
                 es6: true,
                 jest: true,
@@ -64,6 +64,6 @@ module.exports = {
                 'plugin:import/warnings',
                 'plugin:jest/recommended',
             ],
-        },
+        }
     ],
 };

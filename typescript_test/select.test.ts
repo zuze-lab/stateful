@@ -71,7 +71,6 @@ describe('select', () => {
   });
 
   it('should work with multiple funcs (array args)', () => {
-
     interface State {
       fetching: boolean;
       error?: boolean;
@@ -86,10 +85,7 @@ describe('select', () => {
     const spy = jest.fn((first: boolean, second: boolean) => [first, second]);
 
     const selector = createSelector(
-      [
-        (state: State) => state.fetching,
-        (state: State) => state.error
-      ],
+      [(state: State) => state.fetching, (state: State) => state.error],
       spy
     );
 

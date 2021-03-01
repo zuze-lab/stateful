@@ -1,4 +1,4 @@
-import { state, createSelector } from '../index';
+import { state, createSelector, patch } from '../index';
 
 describe('state', () => {
   it('should create', () => {
@@ -17,7 +17,7 @@ describe('state', () => {
     const myState = { fetching: false, error: true };
     const s = state(myState);
     expect(s.getState()).toBe(myState);
-    s.setState({ fetching: true });
+    s.setState(patch({ fetching: true }));
     expect(s.getState()).toStrictEqual({ fetching: true, error: true });
   });
 
@@ -83,7 +83,7 @@ describe('state', () => {
     }));
 
     expect(spy).not.toHaveBeenCalled();
-    s.setState({ fetching: true });
+    s.setState(state => ({ ...state, fetching: true }));
     expect(spy).toHaveBeenCalledWith(true, 'b');
   });
 

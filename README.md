@@ -41,15 +41,17 @@ Create a stateful instance with an initial state. Returns the stateful interface
   Returns the current state.
 
 - **`setState(stateSetter: StateSetter<T>): void`**
-  Can be used to patch or set state:
+  Can be used set state using a function 
 
   ```js
   import { state } from '@zuze/stateful';
 
-  const s = state({fetching:false,error:false});
-  s.setState({fetching:true}); // { fetching: true, error: false }
-  s.setState(state => ({ ...state, fetching: false, data:'some data' })) // { fetching: false, error: false, data: 'some data' }
+  const s = state({ fetching:false, error:false });
+  s.setState({ fetching:true, error: false }); // { fetching: true, error: false }
+  s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
   ```
+
+  **Note**: In versions prior to 3.0, state could be patched by providing a partial object. But since not all states are object, [`patch`](#patch) has been extract into a utility function.
 
 - **`subscribe(subscriberFunction: Subscriber<T>): Unsubscribe`**
   Register a subscriber function to be notified every time the state changes (see [selectors](#selectors)). Returns an unsubscribe function.
@@ -92,8 +94,36 @@ Create a stateful instance with an initial state. Returns the stateful interface
         .then(([first,second,third]) => s.setState({first,second,third}))
         .finally(done);
   });
-
   ```
+  
+<a name="patch"></a>
+**`patch<T,R = Partial<T>>(patch: R) => (existingState: T) => void`**
+
+Prior to v3.0, the state was assumed to be an object and could be patched by providing a partial object like this:
+
+```js
+import { state } from '@zuze/stateful';
+
+const s = state({ fetching: false, error: false });
+s.setState({ fetching:true });
+
+// State prior to 3.0:  { fetching: true, error: false }
+// State after 3.0 { fetching: true }
+```
+
+This was determined to be an unfair assumption since not all states are objects. This functionality has been removed, but can be restored by using the `patch` utility function like this:
+
+```js
+import { patch, state } from '@zuze/stateful';
+
+const s = state({ fetching: false, error: false });
+s.setState(patch({f etching:true }));
+
+// Results in { fetching: true, error: false }
+```
+
+
+
 <a name="selector"></a>
 **`createSelector(...selectors | selectors[], combiner)`**
 

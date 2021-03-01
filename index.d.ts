@@ -1,6 +1,6 @@
-export type Patch<T> = Partial<T>;
+
 export type PatchFn<T> = (state: T) => T;
-export type StateSetter<T> = Patch<T> | PatchFn<T>;
+export type StateSetter<T> = T | PatchFn<T>;
 
 type OptionalPromiseReturning<R> = () => R | Promise<R>;
 type BatchFn<R> =
@@ -25,6 +25,8 @@ type Checker = (a: any, b: any) => boolean;
 export function state<T>(state: T): Stateful<T>;
 
 type Selector<T, R> = (arg: T) => R;
+
+export function patch<T, R = Partial<T>>(patch: R): PatchFn<T>;
 
 //export function memo<R extends Function>(func: R, checker?: Checker): R
 

@@ -22,19 +22,19 @@ export const createSelectorFactory = check => (...fns) => {
 
 export const createSelector = createSelectorFactory();
 
+export const patch = data => initial => ({ ...initial, ...data });
+
 export const state = (state, subscribers = []) => {
   let batchDepth = 0;
+  const call = s => s(state);
 
-  const notify = () => batchDepth || subscribers.forEach(s => s(state));
+  const notify = () => batchDepth || subscribers.forEach(call);
   const done = () => --batchDepth || notify();
 
   return {
     getState: () => state,
     setState: next =>
-      notify(
-        (state =
-          typeof next === 'function' ? next(state) : { ...state, ...next })
-      ),
+      notify((state = typeof next === 'function' ? next(state) : next)),
     batch: then => {
       ++batchDepth;
       const next = then.length ? { then } : then();
@@ -43,7 +43,7 @@ export const state = (state, subscribers = []) => {
         : (done(), next);
     },
     subscribe: s => {
-      s(state);
+      call(s);
       subscribers.push(s);
       return () => (subscribers = subscribers.filter(f => f !== s));
     },

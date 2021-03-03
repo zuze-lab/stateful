@@ -24,4 +24,3 @@ jobs:
       - uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          # github-token: vFvmXRwXBdq8LGymLS6uz6eLFVBL7NLFL

@@ -10,15 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
       - run: yarn install
       - run: yarn lint
-      - run: yarn bench
       - run: yarn test:ci
       - run: yarn build
+      - uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # github-token: vFvmXRwXBdq8LGymLS6uz6eLFVBL7NLFL

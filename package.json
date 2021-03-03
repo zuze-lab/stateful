@@ -25,7 +25,7 @@
     "build": "rimraf build && babel index.js -d build && rollup -c ",
     "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
-    "test:ci": "yarn test:typescript && jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:ci": "yarn test:typescript && yarn test --coverage --coverageReporters=lcov --coverageDirectory=./coverage",
     "test": "jest  --testPathPattern=./test/*",
     "test:typescript": "jest --config ./typescript_test/jest.tsconfig.js --testPathPattern=./typescript_test/*"
   },

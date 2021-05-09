@@ -69,48 +69,4 @@ describe('select', () => {
     expect(selector({ fetching: false })).toStrictEqual([false, undefined]);
     expect(spy).toHaveBeenCalled();
   });
-
-  it('should work with multiple funcs (array args)', () => {
-
-    interface State {
-      fetching: boolean;
-      error?: boolean;
-      name?: string;
-    }
-
-    const state = {
-      fetching: true,
-      error: false,
-    };
-
-    const spy = jest.fn((first: boolean, second: boolean) => [first, second]);
-
-    const selector = createSelector(
-      [
-        (state: State) => state.fetching,
-        (state: State) => state.error
-      ],
-      spy
-    );
-
-    expect(selector(state)).toStrictEqual([true, false]);
-    expect(spy).toHaveBeenCalledWith(true, false);
-    expect(spy).toHaveBeenCalledTimes(1);
-
-    spy.mockClear();
-
-    // // call with same reference doesn't result in selector being called - same behavior as reselect
-    state.fetching = false;
-    expect(selector(state)).toStrictEqual([true, false]);
-
-    // this is sneaky - the computation function would NOT be called because it's
-    // arguments are the same  even though the reference has changed
-    expect(
-      selector({ fetching: true, error: false, name: 'fred' })
-    ).toStrictEqual([true, false]);
-    expect(spy).not.toHaveBeenCalled();
-
-    expect(selector({ fetching: false })).toStrictEqual([false, undefined]);
-    expect(spy).toHaveBeenCalled();
-  });
 });

@@ -1,4 +1,4 @@
-import { state, createSelector } from '../index';
+import { state, createSelector, patch, set } from '../index';
 
 describe('state', () => {
   it('should create', () => {
@@ -6,28 +6,28 @@ describe('state', () => {
     expect(s.getState()).toBe(true);
   });
 
-  it('should set state (with a function)', () => {
-    const s = state(true);
-    expect(s.getState()).toBe(true);
-    s.setState(() => false);
-    expect(s.getState()).toBe(false);
-  });
-
-  it('should set state (with a patch)', () => {
+  it('should set state', () => {
     const myState = { fetching: false, error: true };
     const s = state(myState);
     expect(s.getState()).toBe(myState);
-    s.setState({ fetching: true });
+    s.setState(s => ({ ...s, fetching: true }));
     expect(s.getState()).toStrictEqual({ fetching: true, error: true });
   });
 
-  it('should call a state setter function with the last state', () => {
+  it('should set state (with patch)', () => {
     const myState = { fetching: false, error: true };
     const s = state(myState);
-    const spy = jest.fn(() => false);
-    s.setState(spy);
-    expect(spy).toHaveBeenCalledWith(myState);
-    expect(s.getState()).toBe(false);
+    expect(s.getState()).toBe(myState);
+    s.setState(patch({ fetching: true }));
+    expect(s.getState()).toStrictEqual({ fetching: true, error: true });
+  });
+
+  it('should set state (with set)', () => {
+    const myState = { fetching: false, error: true };
+    const s = state(myState);
+    expect(s.getState()).toBe(myState);
+    s.setState(set({ fetching: true, error: true }));
+    expect(s.getState()).toStrictEqual({ fetching: true, error: true });
   });
 
   it('should subscribe', () => {
@@ -66,11 +66,11 @@ describe('state', () => {
 
     const s = state(myState);
     const spy = jest.fn();
-    const selector = createSelector(
-      ({ fetching }) => fetching,
-      ({ data }) => data.find(({ id }) => id === 2).a,
-      spy
-    );
+
+    const fetching = ({ fetching }) => fetching;
+    const data = ({ data }) => data.find(({ id }) => id === 2)?.a;
+
+    const selector = createSelector(fetching, data, spy);
 
     s.subscribe(selector);
     expect(spy).toHaveBeenCalledWith(false, 'b');
@@ -83,65 +83,7 @@ describe('state', () => {
     }));
 
     expect(spy).not.toHaveBeenCalled();
-    s.setState({ fetching: true });
+    s.setState(patch({ fetching: true }));
     expect(spy).toHaveBeenCalledWith(true, 'b');
-  });
-
-  it('should batch (async)', async () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    const promise = s.batch(() => Promise.resolve());
-    s.setState({ fetching: true });
-    expect(spy).not.toHaveBeenCalled();
-    await promise;
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should batch (no async, no done)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    s.batch(() => void 0);
-    s.setState({ fetching: true });
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should batch (done)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    const d = s.batch(done => done);
-    s.setState({ fetching: true });
-    expect(spy).not.toHaveBeenCalled();
-    d();
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('should not allow done to be called more than once', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    const spy = jest.fn();
-    s.subscribe(spy);
-    spy.mockClear();
-
-    const d = s.batch(done => done);
-    s.setState({ fetching: true });
-    expect(spy).not.toHaveBeenCalled();
-    d();
-    expect(spy).toHaveBeenCalled();
-    spy.mockReset();
-    d(); // call done again - should not change batchDepth
-    s.setState('joe');
-    expect(spy).toHaveBeenCalled();
   });
 });

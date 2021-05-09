@@ -40,16 +40,33 @@ Create a stateful instance with an initial state. Returns the stateful interface
 - **`getState(): T`**
   Returns the current state.
 
-- **`setState(stateSetter: StateSetter<T>): void`**
-  Can be used to patch or set state:
+- **`setState((state: T) => T): void`**
+  Can be used set state using a function 
 
   ```js
   import { state } from '@zuze/stateful';
 
-  const s = state({fetching:false,error:false});
-  s.setState({fetching:true}); // { fetching: true, error: false }
-  s.setState(state => ({ ...state, fetching: false, data:'some data' })) // { fetching: false, error: false, data: 'some data' }
+  const s = state({ fetching:false, error:false });
+  s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
   ```
+
+  **Note**: Prior to version 3.0, state could be patched by providing a partial object. But since not all states are object, [`patch`](#patch) has been extracted into a utility function.
+
+  ```js
+  import { state, patch } from '@zuze/stateful';
+
+  const s = state({ fetching:false, error:false });
+  s.setState(patch({ fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
+  ```  
+
+  **Note**: Prior to version 4.0, state could be set directly. In the interest of simplifying the API, state must be set using a callback, [`set`](#set) has been extracted into a utility function to allow the old behavior:
+
+  ```js
+  import { state, set } from '@zuze/stateful';
+
+  const s = state({ fetching:false, error:false });
+  s.setState(set({ fetching: false })) // { fetching: false  }
+  ```    
 
 - **`subscribe(subscriberFunction: Subscriber<T>): Unsubscribe`**
   Register a subscriber function to be notified every time the state changes (see [selectors](#selectors)). Returns an unsubscribe function.
@@ -60,42 +77,10 @@ Create a stateful instance with an initial state. Returns the stateful interface
   unsub();
   s.setState(() => 'bill'); // nothing logged
   ```
-  
-
-- **`batch(batchFunction: <R>(done?: () => void) => R): R`**
-  Sometimes we may want to update state several times but prevent subscribers from hearing the "intermediate" states. This is done via `batch`. While a `batchFunction` is running, any updates to the state will not be broadcast to subscribers.
-
-  ```js
-  const s = state({first:[],second:[],third:[]});
-
-  // async/await example
-  s.batch(async () => {
-      // none of these intermediate states will be broadcast to subscribers
-      s.setState({ first: await apiCallA(); });
-      s.setState({ second: await apiCallB() });
-      s.setState({ third: await apiCallC() });
-
-      return 'my result';
-  });
-
-  // promise example (same as above)
-  s.batch(() => Promise.all([
-      apiCallA(),
-      apiCallB(),
-      apiCallC()
-    ]).then(([first,second,third]) => s.setState({first,second,third}))
-  );  
-
-  // callback example
-  s.batch(done => {
-      Promise.all([apiCallA(),apiCallB(),apiCallC()])
-        .then(([first,second,third]) => s.setState({first,second,third}))
-        .finally(done);
-  });
 
   ```
 <a name="selector"></a>
-**`createSelector(...selectors | selectors[], combiner)`**
+**`createSelector(...selectors, combiner)`**
 
 The purpose of a selector (popularized in [reselect](https://github.com/reduxjs/reselect)) is to minimize expensive computations through memoization. 
 
@@ -131,33 +116,6 @@ s.subscribe(myFetchingSelector); // logs "fetching changed",false
     s.setState({ fetching: false }); // logs "fetching changed",false
 });
 
-```
-
-**`createSelectorFactory(checker: (a: any, b: any) => boolean)`** 
-
-The default memoizer is a simple equality check `(a,b) => a === b`. If this level of memoization doesn't satisfy your requirements, you can use `createSelectorFactory` to create a `createSelector` that performs custom memoization. 
-
-```js
-import { isEqual } from 'lodash';
-import { createSelectorFactory } from '@zuze/stateful';
-
-const createDeepEqualSelector = createSelectorFactory(isEqual);
-
-const mySelector = createDeepEqualSelector(
-    ({ fetching }) => {
-        console.log('computing...');
-        return fetching
-    },
-    ({ error }) => error,
-    ({ data }) => data[0]
-    (fetching,error,data) => fetching || error ? false : data
-);
-
-const firstState = { fetching:false, error:false, data:[1,2,3] };
-const secondState = { fetching:false, error:false, data:[1,2,3] };
-
-mySelector(firstState); // 1 - logs computing... 
-mySelector(secondState); // 1 - no console - memoized!
 ```
 
 #### About Selector Memoization

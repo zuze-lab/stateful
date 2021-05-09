@@ -1,6 +1,6 @@
 {
   "name": "@zuze/stateful",
-  "version": "2.1.0",
+  "version": "4.0.0",
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "browser": "build/bundle.min.js",
@@ -53,6 +53,6 @@
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-terser": "^6.1.0",
     "ts-jest": "^26.4.1",
-    "typescript": "^3.6.4"
+    "typescript": "^4.2.4"
   }
 }

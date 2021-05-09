@@ -77,8 +77,36 @@ Create a stateful instance with an initial state. Returns the stateful interface
   unsub();
   s.setState(() => 'bill'); // nothing logged
   ```
-
   ```
+  
+<a name="patch"></a>
+**`patch<T,R = Partial<T>>(patch: R) => (existingState: T) => void`**
+
+Prior to v3.0, the state was assumed to be an object and could be patched by providing a partial object like this:
+
+```js
+import { state } from '@zuze/stateful';
+
+const s = state({ fetching: false, error: false });
+s.setState({ fetching:true });
+
+// State prior to 3.0:  { fetching: true, error: false }
+// State after 3.0 { fetching: true }
+```
+
+This was determined to be an unfair assumption since not all states are objects. This functionality has been removed, but can be restored by using the `patch` utility function like this:
+
+```js
+import { patch, state } from '@zuze/stateful';
+
+const s = state({ fetching: false, error: false });
+s.setState(patch({f etching:true }));
+
+// Results in { fetching: true, error: false }
+```
+
+
+
 <a name="selector"></a>
 **`createSelector(...selectors, combiner)`**
 

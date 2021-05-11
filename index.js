@@ -1,29 +1,27 @@
-const memo = fn => {
-  let args, last;
-  return (...inner) =>
-    !args ||
-    inner.length !== args.length ||
-    !inner.every((a, i) => a === args[i])
-      ? ((args = inner), (last = fn(...inner)))
-      : last;
-};
+export const memo = (fn, cmp = (a, b) => a === b, args, last) => (...inner) =>
+  args && inner.length === args.length && inner.every((a, i) => cmp(a, args[i]))
+    ? last
+    : (last = fn(...(args = inner)));
 
-export const createSelector = (...fns) => {
-  const memoed = memo(fns.pop());
-  return !fns.length
-    ? memoed
-    : memo((...args) => memoed(...fns.map(a => a(...args))));
-};
+export const createSelectorFactory = cmp => (...fns) =>
+  (m =>
+    fns.length ? memo((...args) => m(...fns.map(a => a(...args))), cmp) : m)(
+    memo(fns.pop(), cmp)
+  );
 
-export const patch = data => initial => ({ ...initial, ...data });
-export const set = data => () => data;
+export const createSelector = createSelectorFactory();
 
-export const state = (state, subscribers = []) => ({
+export const state = (
+  state,
+  subscribers = [],
+  batchDepth = 0,
+  notify = () => batchDepth || subscribers.map(s => s(state))
+) => ({
   getState: () => state,
-  setState: set =>
-    subscribers.reduce((acc, s) => (s(acc), acc), (state = set(state))),
+  batch: fn => fn(() => --batchDepth || notify(), ++batchDepth),
+  setState: set => notify((state = set(state))),
   subscribe: s => (
-    s(state),
+    batchDepth || s(state),
     subscribers.push(s),
     () => (subscribers = subscribers.filter(f => f !== s))
   ),

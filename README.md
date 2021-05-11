@@ -48,24 +48,42 @@ Create a stateful instance with an initial state. Returns the stateful interface
 
   const s = state({ fetching:false, error:false });
   s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
+  ``` 
+
+- **`batch(batchFunction: (done: () => void) => ): void`**
+  Sometimes we may want to update state several times but prevent subscribers from being notified of the intermediate states. This is done via `batch`. While a `batchFunction` is running, any updates to the state will not be broadcast to subscribers.
+
+  ```js
+  const s = state({first:[],second:[],third:[]});
+
+  // async/await example
+  s.batch(async (done) => {
+      // none of these intermediate states will be broadcast to subscribers
+      s.setState({ first: await apiCallA(); });
+      s.setState({ second: await apiCallB() });
+      s.setState({ third: await apiCallC() });
+
+      done();
+  });
+
+  // promise example (same as above)
+  s.batch((done) => Promise.all(
+      [
+        apiCallA(),
+        apiCallB(),
+        apiCallC()
+      ]
+    )
+    .then(([first,second,third]) => s.setState({first,second,third}))
+    .then(done)
+  );
   ```
 
-  **Note**: Prior to version 3.0, state could be patched by providing a partial object. But since not all states are object, [`patch`](#patch) has been extracted into a utility function.
-
   ```js
-  import { state, patch } from '@zuze/stateful';
+  import { state } from '@zuze/stateful';
 
   const s = state({ fetching:false, error:false });
-  s.setState(patch({ fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
-  ```  
-
-  **Note**: Prior to version 4.0, state could be set directly. In the interest of simplifying the API, state must be set using a callback, [`set`](#set) has been extracted into a utility function to allow the old behavior:
-
-  ```js
-  import { state, set } from '@zuze/stateful';
-
-  const s = state({ fetching:false, error:false });
-  s.setState(set({ fetching: false })) // { fetching: false  }
+  s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
   ```    
 
 - **`subscribe(subscriberFunction: Subscriber<T>): Unsubscribe`**
@@ -78,34 +96,6 @@ Create a stateful instance with an initial state. Returns the stateful interface
   s.setState(() => 'bill'); // nothing logged
   ```
   ```
-  
-<a name="patch"></a>
-**`patch<T,R = Partial<T>>(patch: R) => (existingState: T) => void`**
-
-Prior to v3.0, the state was assumed to be an object and could be patched by providing a partial object like this:
-
-```js
-import { state } from '@zuze/stateful';
-
-const s = state({ fetching: false, error: false });
-s.setState({ fetching:true });
-
-// State prior to 3.0:  { fetching: true, error: false }
-// State after 3.0 { fetching: true }
-```
-
-This was determined to be an unfair assumption since not all states are objects. This functionality has been removed, but can be restored by using the `patch` utility function like this:
-
-```js
-import { patch, state } from '@zuze/stateful';
-
-const s = state({ fetching: false, error: false });
-s.setState(patch({f etching:true }));
-
-// Results in { fetching: true, error: false }
-```
-
-
 
 <a name="selector"></a>
 **`createSelector(...selectors, combiner)`**
@@ -143,6 +133,23 @@ s.subscribe(myFetchingSelector); // logs "fetching changed",false
 
     s.setState({ fetching: false }); // logs "fetching changed",false
 });
+
+```
+
+<a name="memo"></a>
+**`memo(fn)`**
+
+```js
+import { memo } from '@zuze/stateful';
+
+const myFunc = (...someArgs) => {
+  // ... some expensive computations
+  return 42
+}
+
+const memoed = memo(myFunc);
+console.log(memoed(...someArgs)) // outputs 42 - expensive computations performed
+console.log(memoed(...someArgs)) // outputs 42 - expensive computations skipped!
 
 ```
 

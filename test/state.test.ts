@@ -1,4 +1,4 @@
-import { state, createSelector, patch, set } from '../index';
+import { state, createSelector } from '../index';
 
 describe('state', () => {
   it('should create', () => {
@@ -11,22 +11,6 @@ describe('state', () => {
     const s = state(myState);
     expect(s.getState()).toBe(myState);
     s.setState(s => ({ ...s, fetching: true }));
-    expect(s.getState()).toStrictEqual({ fetching: true, error: true });
-  });
-
-  it('should set state (with patch)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    expect(s.getState()).toBe(myState);
-    s.setState(patch({ fetching: true }));
-    expect(s.getState()).toStrictEqual({ fetching: true, error: true });
-  });
-
-  it('should set state (with set)', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    expect(s.getState()).toBe(myState);
-    s.setState(set({ fetching: true, error: true }));
     expect(s.getState()).toStrictEqual({ fetching: true, error: true });
   });
 
@@ -86,7 +70,33 @@ describe('state', () => {
     }));
 
     expect(spy).not.toHaveBeenCalled();
-    s.setState(patch({ fetching: true }));
+    s.setState(s => ({ ...s, fetching: true }));
     expect(spy).toHaveBeenCalledWith(true, 'b');
+  });
+
+  it('should batch', () => {
+    const myState = {
+      a: 'b',
+    };
+
+    const updates = {
+      c: 'd',
+      e: 'f',
+      g: 'h',
+      i: 'j',
+    };
+
+    const s = state(myState);
+    const spy = jest.fn();
+    s.subscribe(spy);
+    spy.mockClear();
+    s.batch(done => {
+      Object.entries(updates).forEach(([k, v]) => {
+        s.setState(last => ({ ...last, [k]: v }));
+        expect(spy).not.toHaveBeenCalled();
+      });
+      done();
+      // expect(spy).toHaveBeenCalled();
+    });
   });
 });

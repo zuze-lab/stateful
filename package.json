@@ -21,13 +21,12 @@
     "url": "https://github.com/zuze-lab/stateful"
   },
   "scripts": {
-    "prepublishOnly": "yarn test && yarn test:typescript && yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "build": "rimraf build && babel index.js -d build && rollup -c ",
     "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
-    "test:ci": "yarn test:typescript && yarn test --coverage --coverageReporters=lcov --coverageDirectory=./coverage",
-    "test": "jest  --testPathPattern=./test/*",
-    "test:typescript": "jest --config ./typescript_test/jest.tsconfig.js --testPathPattern=./typescript_test/*"
+    "test:ci": "yarn test --coverage --coverageReporters=lcov --coverageDirectory=./coverage",
+    "test": "jest --config ./test/jest.tsconfig.js --testPathPattern=./test/*"
   },
   "author": "Adam Jenkins",
   "license": "ISC",
@@ -54,5 +53,8 @@
     "rollup-plugin-terser": "^6.1.0",
     "ts-jest": "^26.4.1",
     "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@rollup/plugin-babel": "^5.3.0"
   }
 }

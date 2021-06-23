@@ -96,7 +96,39 @@ describe('state', () => {
         expect(spy).not.toHaveBeenCalled();
       });
       done();
-      // expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  it('should batch multiple levels', () => {
+    const myState = {
+      a: 'b',
+    };
+
+    const updates = {
+      c: 'd',
+      e: 'f',
+      g: 'h',
+      i: 'j',
+    };
+
+    const s = state(myState);
+    const spy = jest.fn();
+    s.subscribe(spy);
+    spy.mockClear();
+    const dones = [];
+    s.batch(done => {
+      Object.entries(updates).forEach(([k, v]) => {
+        s.batch(done => {
+          s.setState(last => ({ ...last, [k]: v }));
+          dones.push(done);
+        });
+
+        expect(spy).not.toHaveBeenCalled();
+      });
+      dones.forEach(d => d());
+      done();
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

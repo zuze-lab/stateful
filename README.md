@@ -139,6 +139,8 @@ s.subscribe(myFetchingSelector); // logs "fetching changed",false
 <a name="memo"></a>
 **`memo(fn)`**
 
+Bare bones memoization implementation. You aren't allowed to mess with the comparator
+
 ```js
 import { memo } from '@zuze/stateful';
 

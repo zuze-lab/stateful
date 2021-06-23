@@ -19,7 +19,8 @@ export const state = (
 ) => ({
   getState: () => state,
   batch: fn => fn(() => --batchDepth || notify(), ++batchDepth),
-  setState: set => notify((state = set(state))),
+  setState: set =>
+    notify((state = typeof set === 'function' ? set(state) : set)),
   subscribe: s => (
     batchDepth || s(state),
     subscribers.push(s),

@@ -28,8 +28,7 @@
     "build": "rimraf build && babel index.js -d build && rollup -c ",
     "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
-    "test:ci": "yarn test --coverage --coverageReporters=lcov --coverageDirectory=../coverage",
-    "test": "jest --config ./test/jest.tsconfig.js --testPathPattern=./test/*"
+    "test": "jest --testPathPattern=./test/*"
   },
   "author": "Adam Jenkins",
   "license": "ISC",
@@ -42,7 +41,6 @@
     "babel-eslint": "^10.0.3",
     "babel-jest": "^25.1.0",
     "benchmark": "^2.1.4",
-    "coveralls": "^3.0.9",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-import": "^2.21.1",

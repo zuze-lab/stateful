@@ -28,6 +28,7 @@
     "build": "rimraf build && babel index.js -d build && rollup -c ",
     "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
+    "test:ci": "yarn test --coverage --coverageReporters=lcov --coverageDirectory=../coverage",
     "test": "jest --config ./test/jest.tsconfig.js --testPathPattern=./test/*"
   },
   "author": "Adam Jenkins",

@@ -1,6 +1,6 @@
 {
   "name": "@zuze/stateful",
-  "version": "4.0.0",
+  "version": "3.0.0",
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "browser": "build/bundle.min.js",
@@ -12,7 +12,10 @@
     "index.js",
     "index.d.ts"
   ],
-  "keywords": [],
+  "keywords": [
+    "state",
+    "redux"
+  ],
   "bugs": {
     "url": "https://github.com/zuze-lab/stateful/issues"
   },
@@ -49,6 +52,7 @@
     "prettier": "^1.18.2",
     "reselect": "^4.0.0",
     "rollup": "^2.15.0",
+    "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-terser": "^6.1.0",
     "ts-jest": "^26.4.1",

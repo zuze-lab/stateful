@@ -1,6 +1,7 @@
 import { terser } from 'rollup-plugin-terser';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import { babel } from '@rollup/plugin-babel';
+import bundlesize from 'rollup-plugin-bundle-size';
 
 export default {
   input: 'index.js',
@@ -11,7 +12,7 @@ export default {
       sourcemap: true,
       format: 'iife',
       name: 'stateful',
-      plugins: [terser()],
+      plugins: [terser(), bundlesize()],
     },
   ],
 };

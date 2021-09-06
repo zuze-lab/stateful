@@ -13,17 +13,15 @@ export const createSelector = createSelectorFactory();
 
 export const state = (
   state,
-  subscribers = [],
+  subscribers = new Set(),
   batchDepth = 0,
-  notify = () => batchDepth || subscribers.map(s => s(state))
+  notify = () => batchDepth || subscribers.forEach(s => s(state))
 ) => ({
   getState: () => state,
   batch: fn => fn(() => --batchDepth || notify(), ++batchDepth),
   setState: set =>
     notify((state = typeof set === 'function' ? set(state) : set)),
   subscribe: s => (
-    batchDepth || s(state),
-    subscribers.push(s),
-    () => (subscribers = subscribers.filter(f => f !== s))
+    batchDepth || s(state), subscribers.add(s), () => subscribers.delete(s)
   ),
 });

@@ -2,13 +2,12 @@
 
 [![npm version](https://img.shields.io/npm/v/@zuze/stateful.svg)](https://npmjs.org/package/@zuze/stateful)
 [![Coverage Status](https://coveralls.io/repos/github/zuze-lab/stateful/badge.svg)](https://coveralls.io/github/zuze-lab/stateful)
-[![Build Status](https://travis-ci.com/zuze-lab/stateful.svg)](https://travis-ci.com/zuze-lab/stateful)
+![Build Status](https://github.com/zuze-lab/stateful/actions/workflows/test.yaml/badge.svg)
 [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/@zuze/stateful)](https://bundlephobia.com/result?p=@zuze/stateful)
 
 ## What is this?
 
 It's a [ridiculously tiny](https://bundlephobia.com/result?p=@zuze/stateful) and highly performant state mangement solution when you don't want to implement [redux](https://github.com/reduxjs/redux). It's supposed to be minimalistic (comes in most handy for a source of state for library developers) and extremely simple. It comes with everything you need (including a super tiny memoized selector implementation) to maintain your state.
-
 
 ### Getting Started
 
@@ -25,9 +24,9 @@ Or just pull it in from the browser:
 ```html
 <script src="https://unpkg.com/@zuze/stateful"></script>
 <script>
-    const { state } = stateful;
-    const myState = state('jim!');
-    myState.subscribe(console.log); // jim!
+  const { state } = stateful;
+  const myState = state('jim!');
+  myState.subscribe(console.log); // jim!
 </script>
 ```
 
@@ -41,14 +40,14 @@ Create a stateful instance with an initial state. Returns the stateful interface
   Returns the current state.
 
 - **`setState((state: T) => T): void`**
-  Can be used set state using a function 
+  Can be used set state using a function
 
   ```js
   import { state } from '@zuze/stateful';
 
-  const s = state({ fetching:false, error:false });
-  s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
-  ``` 
+  const s = state({ fetching: false, error: false });
+  s.setState(state => ({ ...state, fetching: false, data: 'some data' })); // { fetching: false, error: false, data: 'some data' }
+  ```
 
 - **`batch(batchFunction: (done: () => void) => ): void`**
   Sometimes we may want to update state several times but prevent subscribers from being notified of the intermediate states. This is done via `batch`. While a `batchFunction` is running, any updates to the state will not be broadcast to subscribers.
@@ -82,9 +81,9 @@ Create a stateful instance with an initial state. Returns the stateful interface
   ```js
   import { state } from '@zuze/stateful';
 
-  const s = state({ fetching:false, error:false });
-  s.setState(state => ({ ...state, fetching: false, data: 'some data' })) // { fetching: false, error: false, data: 'some data' }
-  ```    
+  const s = state({ fetching: false, error: false });
+  s.setState(state => ({ ...state, fetching: false, data: 'some data' })); // { fetching: false, error: false, data: 'some data' }
+  ```
 
 - **`subscribe(subscriberFunction: Subscriber<T>): Unsubscribe`**
   Register a subscriber function to be notified every time the state changes (see [selectors](#selectors)). Returns an unsubscribe function.
@@ -97,10 +96,12 @@ Create a stateful instance with an initial state. Returns the stateful interface
   ```
   ```
 
+  ```
+
 <a name="selector"></a>
 **`createSelector(...selectors, combiner)`**
 
-The purpose of a selector (popularized in [reselect](https://github.com/reduxjs/reselect)) is to minimize expensive computations through memoization. 
+The purpose of a selector (popularized in [reselect](https://github.com/reduxjs/reselect)) is to minimize expensive computations through memoization.
 
 There is an alternate method for using selectors outside of minimizing expensive computations: because the combiner function only gets called when at least one of it's arguments change, it essentially becomes a callback for changes in the input selectors.
 
@@ -146,18 +147,17 @@ import { memo } from '@zuze/stateful';
 
 const myFunc = (...someArgs) => {
   // ... some expensive computations
-  return 42
-}
+  return 42;
+};
 
 const memoed = memo(myFunc);
-console.log(memoed(...someArgs)) // outputs 42 - expensive computations performed
-console.log(memoed(...someArgs)) // outputs 42 - expensive computations skipped!
-
+console.log(memoed(...someArgs)); // outputs 42 - expensive computations performed
+console.log(memoed(...someArgs)); // outputs 42 - expensive computations skipped!
 ```
 
 #### About Selector Memoization
 
-There are 2 levels of memoizations going on when creating a selector. 
+There are 2 levels of memoizations going on when creating a selector.
 
 1. The function returned from `createSelector` itself is memoized using `checker`
 2. The `combiner` function is memoized using `checker`.
@@ -166,4 +166,3 @@ What this effectively means is:
 
 1. If the function returns from `createSelector` is called with the same arguments neither the input selectors nor the combiner will be called
 2. If the function returned from `createSelector` is called with different arguments, all input selectors will be called. If these executions result in the same arguments as the last time, the `combiner` will **NOT** be called.
-

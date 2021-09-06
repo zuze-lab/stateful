@@ -1,6 +1,6 @@
 {
   "name": "@zuze/stateful",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "browser": "build/bundle.min.js",
@@ -12,7 +12,10 @@
     "index.js",
     "index.d.ts"
   ],
-  "keywords": [],
+  "keywords": [
+    "state",
+    "redux"
+  ],
   "bugs": {
     "url": "https://github.com/zuze-lab/stateful/issues"
   },
@@ -21,13 +24,11 @@
     "url": "https://github.com/zuze-lab/stateful"
   },
   "scripts": {
-    "prepublishOnly": "yarn test && yarn test:typescript && yarn build",
+    "prepublishOnly": "yarn test && yarn build",
     "build": "rimraf build && babel index.js -d build && rollup -c ",
     "bench": "yarn build && node ./benchmark.js",
     "lint": "eslint index.js",
-    "test:ci": "yarn test:typescript && jest --coverage --coverageReporters=text-lcov | coveralls",
-    "test": "jest  --testPathPattern=./test/*",
-    "test:typescript": "jest --config ./typescript_test/jest.tsconfig.js --testPathPattern=./typescript_test/*"
+    "test": "jest --testPathPattern=./test/*"
   },
   "author": "Adam Jenkins",
   "license": "ISC",
@@ -35,12 +36,12 @@
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
+    "@rollup/plugin-babel": "^5.3.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^14.14.20",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^25.1.0",
     "benchmark": "^2.1.4",
-    "coveralls": "^3.0.9",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-import": "^2.21.1",
@@ -50,9 +51,10 @@
     "prettier": "^1.18.2",
     "reselect": "^4.0.0",
     "rollup": "^2.15.0",
+    "rollup-plugin-bundle-size": "^1.0.3",
     "rollup-plugin-sourcemaps": "^0.6.2",
     "rollup-plugin-terser": "^6.1.0",
     "ts-jest": "^26.4.1",
-    "typescript": "^3.6.4"
+    "typescript": "^4.2.4"
   }
 }

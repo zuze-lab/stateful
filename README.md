@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@zuze/stateful.svg)](https://npmjs.org/package/@zuze/stateful)
 [![Coverage Status](https://coveralls.io/repos/github/zuze-lab/stateful/badge.svg)](https://coveralls.io/github/zuze-lab/stateful)
-![Build Status](https://github.com/zuze-lab/stateful/actions/workflows/build.yaml/badge.svg)
+![Build Status](https://github.com/zuze-lab/stateful/actions/workflows/main.yaml/badge.svg)
 [![Bundle Phobia](https://badgen.net/bundlephobia/minzip/@zuze/stateful)](https://bundlephobia.com/result?p=@zuze/stateful)
 
 ## What is this?

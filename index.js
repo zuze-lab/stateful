@@ -11,17 +11,11 @@ export const createSelectorFactory = cmp => (...fns) =>
 
 export const createSelector = createSelectorFactory();
 
-export const state = (
-  state,
-  subscribers = new Set(),
-  batchDepth = 0,
-  notify = () => batchDepth || subscribers.forEach(s => s(state))
-) => ({
+export const state = (state, subscribers = new Set()) => ({
   getState: () => state,
-  batch: fn => fn(() => --batchDepth || notify(), ++batchDepth),
-  setState: set =>
-    notify((state = typeof set === 'function' ? set(state) : set)),
-  subscribe: s => (
-    batchDepth || s(state), subscribers.add(s), () => subscribers.delete(s)
+  setState: set => (
+    (state = typeof set === 'function' ? set(state) : set),
+    subscribers.forEach(s => s(state))
   ),
+  subscribe: s => (s(state), subscribers.add(s), () => subscribers.delete(s)),
 });

@@ -2,13 +2,10 @@ export type StateSetter<T> = (state: T) => T;
 
 type Unsubscribe = () => void;
 type Subscriber<T> = (state: T) => void;
-type BatchFunc = (done: DoneFunc) => void;
-type DoneFunc = () => void;
 
 export function memo<T extends Function>(fn: T): T;
 export interface Stateful<T> {
   getState(): T;
-  batch(fn: BatchFunc): void;
   setState(next: StateSetter<T>): void;
   subscribe(subscriber: Subscriber<T>): Unsubscribe;
 }

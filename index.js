@@ -13,9 +13,6 @@ export const createSelector = createSelectorFactory();
 
 export const state = (state, subscribers = new Set()) => ({
   getState: () => state,
-  setState: set => (
-    (state = typeof set === 'function' ? set(state) : set),
-    subscribers.forEach(s => s(state))
-  ),
+  setState: set => ((state = set(state)), subscribers.forEach(s => s(state))),
   subscribe: s => (s(state), subscribers.add(s), () => subscribers.delete(s)),
 });

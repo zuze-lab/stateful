@@ -49,35 +49,6 @@ Create a stateful instance with an initial state. Returns the stateful interface
   s.setState(state => ({ ...state, fetching: false, data: 'some data' })); // { fetching: false, error: false, data: 'some data' }
   ```
 
-- **`batch(batchFunction: (done: () => void) => ): void`**
-  Sometimes we may want to update state several times but prevent subscribers from being notified of the intermediate states. This is done via `batch`. While a `batchFunction` is running, any updates to the state will not be broadcast to subscribers.
-
-  ```js
-  const s = state({first:[],second:[],third:[]});
-
-  // async/await example
-  s.batch(async (done) => {
-      // none of these intermediate states will be broadcast to subscribers
-      s.setState({ first: await apiCallA(); });
-      s.setState({ second: await apiCallB() });
-      s.setState({ third: await apiCallC() });
-
-      done();
-  });
-
-  // promise example (same as above)
-  s.batch((done) => Promise.all(
-      [
-        apiCallA(),
-        apiCallB(),
-        apiCallC()
-      ]
-    )
-    .then(([first,second,third]) => s.setState({first,second,third}))
-    .then(done)
-  );
-  ```
-
   ```js
   import { state } from '@zuze/stateful';
 
@@ -126,15 +97,15 @@ const s = state({
 s.subscribe(myFetchingSelector); // logs "fetching changed",false
 
 (async() => {
-    s.setState({ fetching: true }); // logs "fetching changed",true
+    s.setState(state => ({ ...state, fetching: true })); // logs "fetching changed",true
 
     try {
-        s.setState({data:await someAPICall() }) // not called!
+        s.setState(state => ({ ...state, data: await someAPICall() })) // not called!
     } catch {
-        s.setState({error:true}) // not called!
+        s.setState((state => ({ ...state, error: true })) // not called!
     }
 
-    s.setState({ fetching: false }); // logs "fetching changed",false
+    s.setState((state => ({ ...state, fetching: false })); // logs "fetching changed",false
 });
 
 ```

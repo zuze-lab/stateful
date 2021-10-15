@@ -100,7 +100,8 @@ s.subscribe(myFetchingSelector); // logs "fetching changed",false
     s.setState(state => ({ ...state, fetching: true })); // logs "fetching changed",true
 
     try {
-        s.setState(state => ({ ...state, data: await someAPICall() })) // not called!
+        const data = await someAPICall();
+        s.setState(state => ({ ...state, data })) // not called!
     } catch {
         s.setState((state => ({ ...state, error: true })) // not called!
     }

@@ -14,14 +14,6 @@ describe('state', () => {
     expect(s.getState()).toStrictEqual({ fetching: true, error: true });
   });
 
-  it('should set state ', () => {
-    const myState = { fetching: false, error: true };
-    const s = state(myState);
-    expect(s.getState()).toBe(myState);
-    s.setState({ ...myState, fetching: true });
-    expect(s.getState()).toStrictEqual({ fetching: true, error: true });
-  });
-
   it('should subscribe', () => {
     type StateType = boolean | { fetching: boolean; error: boolean };
     const myState = { fetching: false, error: true };

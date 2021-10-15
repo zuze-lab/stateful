@@ -1,4 +1,4 @@
-export type StateSetter<T> = ((state: T) => T) | T;
+export type StateSetter<T> = (state: T) => T;
 
 type Unsubscribe = () => void;
 type Subscriber<T> = (state: T) => void;

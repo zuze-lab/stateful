@@ -3,7 +3,7 @@ export const memo = (fn, cmp = (a, b) => a === b, args, last) => (...inner) =>
     ? last
     : (last = fn(...(args = inner)));
 
-export const createSelectorFactory = cmp => (...fns) =>
+const createSelectorFactory = cmp => (...fns) =>
   (m =>
     fns.length ? memo((...args) => m(...fns.map(a => a(...args))), cmp) : m)(
     memo(fns.pop(), cmp)

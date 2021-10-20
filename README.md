@@ -67,11 +67,7 @@ Create a stateful instance with an initial state. Returns the stateful interface
   s.setState(() => 'bill'); // nothing logged
   ```
 
-  ```
-
-  ```
-
-<a name="selector"></a>
+<a name="selectors"></a>
 **`createSelector(...selectors, combiner)`**
 
 The purpose of a selector (popularized in [reselect](https://github.com/reduxjs/reselect)) is to minimize expensive computations through memoization.
@@ -96,7 +92,7 @@ const s = state({
 
 s.subscribe(myFetchingSelector); // logs "fetching changed",false
 
-(async() => {
+(async() => {selectors
     s.setState(state => ({ ...state, fetching: true })); // logs "fetching changed",true
 
     try {

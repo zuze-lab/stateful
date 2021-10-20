@@ -1,6 +1,6 @@
 {
   "name": "@zuze/stateful",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Ridiculously tiny state/selector package",
   "main": "build/index.js",
   "browser": "build/bundle.min.js",

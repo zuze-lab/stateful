@@ -3,10 +3,10 @@ export const memo = (fn, cmp = (a, b) => a === b, args, last) => (...inner) =>
     ? last
     : (last = fn(...(args = inner)));
 
-export const createSelector = (...fns) =>
-  (m => (fns.length ? memo((...args) => m(...fns.map(a => a(...args)))) : m))(
-    memo(fns.pop())
-  );
+export const createSelector = (...fns) => {
+  const m = memo(fns.pop());
+  return fns.length ? memo((...args) => m(...fns.map(a => a(...args)))) : m;
+};
 
 export const state = (state, subscribers = new Set()) => ({
   getState: () => state,
